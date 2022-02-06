@@ -1,3 +1,27 @@
+#' Find overlap between vessel track points
+#'
+#' Find overlap between vessel track points.
+#' **Note: this function is highly experimental and still needs to be
+#' documented.**
+#'
+#' @param df A data frame consisting of a time series. Each observation is a point in time. The time points must be evenly spaced.
+#' @param time_range A time range, in the form of a two-element vector.
+#' @param speed_range A vessel speed range, also in the form of a two-element vector.
+#' @param time_col A string indicating the name of the column that contains the time values.
+#' @param speed_col A string indicating the name of the column that contains the speed values.
+#' @param lon_col A string indicating the name of the column that contains the longitude values.
+#' @param lat_col A string indicating the name of the column that contains the latitude values.
+#'
+#' @return A [tibble][tibble::tibble-package] whose observations are the closest
+#'   points, i.e., the first row contains information about the point closest to
+#'   the first, the second row, about the point closest to the second, and so
+#'   on. These are the columns:
+#' \describe{
+#' \item{`arg_min_dist`}{The index of closest point.}
+#' \item{`min_dist`}{The distance to the closest point.}
+#' }
+#'
+#' @md
 #' @export
 find_overlap <-
   function(df,

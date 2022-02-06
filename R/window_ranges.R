@@ -1,3 +1,21 @@
+#' Determine window ranges
+#'
+#' This function determines ranges (i.e., from and to positions) for windows of
+#' size `window`. `n` specifies the number of windows.
+#'
+#' @param n Number of windows.
+#' @param start Starting position of the first window.
+#' @param window Window size.
+#' @param na_rm A logical indicating whether to remove invalid ranges (i.e.,
+#'   whether to keep `from` and `to` as `NA`) or otherwise.
+#'
+#' @return A matrix of ranges (`from` and `to`), each row pertains a window.
+#'
+#' @examples
+#' window_ranges(10, start = 2, window = 3)
+#'
+#' window_ranges(10, start = 2, window = 3, na_rm = TRUE)
+#' @md
 #' @export
 window_ranges <- function(n, start, window = 1, na_rm = FALSE) {
 
