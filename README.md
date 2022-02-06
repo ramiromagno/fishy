@@ -13,5 +13,6 @@ The goal of fishy is to …
 You can install the development version of fishy like so:
 
 ``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+# install.packages("remotes")
+remotes::install_github("ramiromagno/fishy")
 ```
