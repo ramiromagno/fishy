@@ -40,7 +40,7 @@ find_overlap <-
     # Indices corresponding to the time interval indicated in `time_range`
     i_range <- as.integer(time_range / delta_t) + 1
     ranges <-
-      window_ranges(
+      index_ranges(
         n = n_row,
         start = i_range[1],
         window = i_range[2] - i_range[1] + 1,
