@@ -32,7 +32,6 @@ find_overlap <-
            lon_col = 'LON',
            lat_col = 'LAT') {
     n_row <- nrow(df)
-    i_vec <- seq_len(n_row)
     m <- as.matrix(df[c(lon_col, lat_col)])
 
     # Because the time series is evenly spaced we can derive a time step
