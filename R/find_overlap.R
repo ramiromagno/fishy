@@ -47,7 +47,6 @@ find_overlap <-
         na_rm = TRUE
       )
 
-    # All low speed observations
     speed_condition <-
       df[[speed_col]] >= speed_range[1] &
       df[[speed_col]] < speed_range[2]
