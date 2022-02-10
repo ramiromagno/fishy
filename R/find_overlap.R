@@ -1,3 +1,9 @@
+setup_dt <- function(df, time_col) {
+  dt <- data.table::as.data.table(df)
+  dt[['..id..']] <- as.numeric(seq.int(nrow(dt)))
+  data.table::setkeyv(dt, c(time_col))
+}
+
 #' Find overlap between vessel track points
 #'
 #' Find overlap between vessel track points.
@@ -31,42 +37,91 @@ find_overlap <-
            speed_col = 'SPE',
            lon_col = 'LON',
            lat_col = 'LAT') {
+
     n_row <- nrow(df)
-    m <- as.matrix(df[c(lon_col, lat_col)])
+    # dt <- setup_dt(df, time_col = time_col)
+    dt <- data.table::as.data.table(df)
+    dt[['..id..']] <- seq.int(nrow(dt))
+    data.table::setkeyv(dt, c(time_col))
 
-    # Because the time series is evenly spaced we can derive a time step
-    delta_t <- df[2, time_col] - df[1, time_col]
-
-    # Indices corresponding to the time interval indicated in `time_range`
-    i_range <- as.integer(time_range / delta_t) + 1
-    ranges <-
-      index_ranges(
-        n = n_row,
-        start = i_range[1],
-        window = i_range[2] - i_range[1] + 1,
-        na_rm = TRUE
-      )
-
-    speed_condition <-
-      df[[speed_col]] >= speed_range[1] &
-      df[[speed_col]] < speed_range[2]
+    t_lower <- as.data.frame(dt[ , time_col, with = FALSE])[, 1] + time_range[1]
+    t_upper <- as.data.frame(dt[ , time_col, with = FALSE])[, 1] + time_range[2]
 
     arg_min_dist <- rep(NA_integer_, length = n_row)
     min_dist <- rep(NA_real_, length = n_row)
 
-    for (i in seq_len(nrow(ranges))) {
-      ii <- intersect3(ranges[i, ], speed_condition)
-      distances <- sp::spDistsN1(pt = m[i, ],
-                             pts = m[ii, , drop = FALSE],
-                             longlat = TRUE)
+    for (i in seq_len(n_row)) {
 
-      iii <- which.min(distances)
-      if (length(iii) > 0) {
-        arg_min_dist[i] <- ii[iii]
-        min_dist[i] <- distances[iii]
+      dt_subset <-
+        dt[dt[[time_col]] >= t_lower[i] &
+             dt[[time_col]] < t_upper[i] &
+             dt[[speed_col]] >= speed_range[1] &
+             dt[[speed_col]] < speed_range[2], c('..id..', lon_col, lat_col), with = FALSE]
+
+      if (nrow(dt_subset) > 0) {
+        distances <- spDistsN1(pt_x = dt[[lon_col]][i],
+                               pt_y = dt[[lat_col]][i],
+                               pts_x = dt_subset[[lon_col]],
+                               pts_y = dt_subset[[lat_col]],
+                               longlat = TRUE)
+
+        iii <- which.min(distances)
+        if (length(iii) > 0) {
+          arg_min_dist[i] <- dt_subset[iii, '..id..']
+          min_dist[i] <- distances[iii]
+        }
       }
     }
 
-    return(tibble::tibble(arg_min_dist, min_dist))
+    return(cbind(dt, arg_min_dist, min_dist))
 
   }
+
+#' #' @export
+#' find_overlap_old <-
+#'   function(df,
+#'            time_range,
+#'            speed_range,
+#'            time_col = 'DATE',
+#'            speed_col = 'SPE',
+#'            lon_col = 'LON',
+#'            lat_col = 'LAT') {
+#'     n_row <- nrow(df)
+#'     m <- as.matrix(df[c(lon_col, lat_col)])
+#'
+#'     # Because the time series is evenly spaced we can derive a time step
+#'     delta_t <- df[2, time_col] - df[1, time_col]
+#'
+#'     # Indices corresponding to the time interval indicated in `time_range`
+#'     i_range <- as.integer(time_range / delta_t) + 1
+#'     ranges <-
+#'       index_ranges(
+#'         n = n_row,
+#'         start = i_range[1],
+#'         window = i_range[2] - i_range[1] + 1,
+#'         na_rm = TRUE
+#'       )
+#'
+#'     speed_condition <-
+#'       df[[speed_col]] >= speed_range[1] &
+#'       df[[speed_col]] < speed_range[2]
+#'
+#'     arg_min_dist <- rep(NA_integer_, length = n_row)
+#'     min_dist <- rep(NA_real_, length = n_row)
+#'
+#'     for (i in seq_len(nrow(ranges))) {
+#'       ii <- intersect3(ranges[i, ], speed_condition)
+#'       distances <- sp::spDistsN1(pt = m[i, ],
+#'                                  pts = m[ii, , drop = FALSE],
+#'                                  longlat = TRUE)
+#'
+#'       iii <- which.min(distances)
+#'       if (length(iii) > 0) {
+#'         arg_min_dist[i] <- ii[iii]
+#'         min_dist[i] <- distances[iii]
+#'       }
+#'     }
+#'
+#'     return(tibble::tibble(arg_min_dist, min_dist))
+#'
+#'   }
