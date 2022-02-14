@@ -16,11 +16,10 @@ LazyData: true
 RoxygenNote: 7.1.2
 Imports: 
     data.table,
-    dtplyr,
+    geosphere,
     magrittr,
     rlang,
-    tibble,
-    tidytable
+    tibble
 Suggests: 
     sp,
     testthat (>= 3.0.0)

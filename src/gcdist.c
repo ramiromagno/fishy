@@ -8,6 +8,20 @@ void fishy_dists_NN(double *u1, double *v1, double *u2, double *v2,
                  int *n, double *dists, int *lonlat);
 void fishy_lengths(double *u, double *v, int *n, double *lengths, int *lonlat);
 
+// void wgs84(double *u, double *v, double *uout, double *vout,
+//                  int *n, double *dists);
+
+// void wgs84(double *u, double *v, double *uout, double *vout,
+//            int *n, double *dists) {
+//   int N = *n, j;
+//   double gc[1];
+//
+//   for (j = 0; j < N; j++) {
+//     fishy_gcdist(u+j, uout+j, v+j, vout+j, gc);
+//     dists[j] = gc[0];
+//   }
+// }
+
 void fishy_dists(double *u, double *v, double *uout, double *vout,
               int *n, double *dists, int *lonlat) {
   int N = *n, j;
