@@ -67,7 +67,7 @@ find_overlap <-
 
         iii <- which.min(distances)
         if (length(iii) > 0) {
-          arg_min_dist[i] <- dt_subset[iii, '..id..']
+          arg_min_dist[i] <- dt_subset$..id..[iii]
           min_dist[i] <- distances[iii]
         }
       }
